@@ -18,8 +18,8 @@ class HtmlOutputer(object):
         for data in self.datas:
             fout.write("<tr>")
             fout.write("<td>%s</td>" % data['url'])
-            fout.write("<td>%s</td>" % data['title'].encode('GB2312'))
-            fout.write("<td>%s</td>" % data['summery'].encode('GB2312'))
+            fout.write("<td>%s</td>" % data['title'].encode('UTF-8'))
+            fout.write("<td>%s</td>" % data['summary'].encode('UTF-8'))
             fout.write("</tr>")
         
         fout.write("</table>")
