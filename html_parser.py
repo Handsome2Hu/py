@@ -1,5 +1,7 @@
+#pip install beautifulsopu4
 from bs4 import BeautifulSoup
 import re
+#python 2.x urllib2
 import urllib.parse
 
 class HtmlParser(object):
@@ -15,12 +17,19 @@ class HtmlParser(object):
     
     def _get_new_data(self,page_url, soup):
         res_data = {}
+        
+        #url
+        res_data['url'] = page_url
+        
         # <dd class="lemmaWgt-lemmaTitle-title">  <h1>Python</h1>
-
         title_node = soup.find('dd',class_="lemmaWgt-lemmaTitle-title").find("h1")
         res_data['title'] = title_node.get_text()
         
-        summary_node = soup.
+        #<div class="lemma-summary" label-module="lemmaSummary">
+        summary_node = soup.find('div',class_="lemma-summary")
+        res_data['summary'] = summary_node.get_text()
+        
+        return res_data
     
     def parser(self,page_url, html_cont):
         if page_url is None or html_cont is None:
