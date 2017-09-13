@@ -8,7 +8,9 @@ class HtmlParser(object):
     
     def _get_new_urls(self,page_url, soup):
         new_urls = set()
-        links = soup.find_all('a',href=re.compile(r"/view/\d+\.htm"))
+        #<a target="_blank" href="/item/%E8%A7%A3%E9%87%8A%E5%99%A8">½âÊÍÆ÷</a>
+        #<a class="lock-lemma" target="_blank" href="/view/10812319.htm" title="Ëø¶¨"><em class="cmn-icon wiki-lemma-icons wiki-lemma-icons_lock-lemma"></em>Ëø¶¨</a>
+        links = soup.find_all('a',href=re.compile(r"/item/"))
         for link in links:
             new_url = link['href']
             new_full_url = urllib.parse.urljoin(page_url,new_url)
