@@ -1,0 +1,8 @@
+#pragma once
+
+#define VER_UMS_HQ_MAJOR 2
+#define VER_UMS_HQ_MINOR 2
+#define VER_UMS_HQ_SVN $WCREV$
+
+#define VER_UMS_HQ_REVISION1 2,2,0,$WCREV$
+#define VER_UMS_HQ_REVISION2 "2.2.0.$WCREV$"
