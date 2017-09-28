@@ -16,17 +16,22 @@
 #SubWCRev.exe 是SVN自带工具，复制文件，并替换文件中的参数
 #$WCREV$ 替换为SVN版本号
 #运行该py 替换rc文件的版本号
+
+#发布该py 需要下载第三方发布工具
+#pip install pyinstaller
+#运行 pyinstaller -F KdModifyRcFileVersion.py
+#打包成一个独立的 KdModifyRcFileVersion.exe
 import string
 import re
 import codecs
 import os
 import sys
 import chardet
+import shutil
 
 filepath = sys.argv[1]
 
-
-f = codecs.open('Source.Version.h','r+','utf-8')
+f = codecs.open('Source.Version.h','r+')
 lines = f.readlines()
 version1 = ''
 version2 = ''
@@ -38,31 +43,37 @@ for line in lines:
         version2 = tmp[2]
 f.seek(0)
 f.close()
+#该文件由SubWCRev.exe生成，由该exe删除
+os.remove('Source.Version.h')
 
-
+shutil.copyfile(filepath,filepath+'_')
 #rc 文件有utf 16 有 ascii，所以先判断文件的编码格式
-tt = open(filepath,'rb')
+tt = open(filepath+'_','rb')
 enc = chardet.detect(tt.readline())
 tt.seek(0)
 tt.close()
 
 if enc['encoding'] == 'ascii':
-    ff = codecs.open(filepath,"r+")
+    ff = codecs.open(filepath+'_',"r+")
+    EnterCode = '\n'
 else:  
-    ff = codecs.open(filepath,"r+",enc['encoding'])
+    ff = codecs.open(filepath+'_',"r+",enc['encoding'])
+    EnterCode = '\r\n'
 
 lines = ff.readlines()
 data = []
 for line1 in lines:
     tmp = re.split('\s+',line1)
     if len(tmp) >= 2 and (tmp[1] == 'FILEVERSION' or tmp[1] =='PRODUCTVERSION'):
-        strtmp = tmp[0] +' ' + tmp[1] +' ' + version1 +  '\r\n'
+        version3 = tmp[2] #当前rc的版本号
+        strtmp = tmp[0] +' ' + tmp[1] +' ' + version1 +  EnterCode
         data.append(strtmp)
     elif len(tmp) >= 3 and (tmp[2] == '"FileVersion",' or tmp[2] =='"ProductVersion",'):
-        strtmp = tmp[0] + '            ' + tmp[1] + ' ' +tmp[2] + ' ' + version2 + '\r\n'
+        strtmp = tmp[0] + '            ' + tmp[1] + ' ' +tmp[2] + ' ' + version2 + EnterCode
         data.append(strtmp)
     else:
         data.append(line1)
 ff.seek(0)
-ff.writelines(data)
+if version3 != version1:            #当版本号相同时，不重新写rc文件
+    ff.writelines(data)
 ff.close()
